@@ -150,3 +150,11 @@ print(maxVal)
 i = getIndex(maxVal,n)
 print(i)
 print(Phx[n.index(maxVal)])
+
+
+with open("data.txt","w") as f:
+    f.write("Pressure,Beta,massratio,comp1,comp2,wtot\n")
+
+    for i in range(len(Phx)):
+        wstring = str(Phx[i])+","+str(n[i])+","+str(mr[i])+","+str(wc1[i])+","+str(wc2[i])+","+str(wtot[i])+"\n"
+        f.write(wstring)
