@@ -15,31 +15,34 @@ Stuff Needed
 
 #Low Pressure Loop
 fluid_LPL = "ammonia"
-Plow = 4*10**5
+T_cold = 0+273.15
+T_low = T_cold - 1
 
 #Intermediate Properties
 Phx = 6*10**5
 
 
 #High Pressure Loop
-Phigh = 10*10**5
+T_hot = 25+273.15
+T_high = T_hot + 1
 fluid_HPL = "propane"
 Q_out = -150
 
 
-def loop(P1, P2, P5, P6, lpl_fluid, hpl_fluid):
+def loop(T1, P2, P5, T6, lpl_fluid, hpl_fluid):
     #Low Pressure Loop States
     global s1;global s2;global s3;global s4;global s5;global s6;global s7;global s8
-    s1 = State("P", P1, "Q", 1, lpl_fluid)
+    s1 = State("T", T1, "Q", 1, lpl_fluid)
     s2 = State("P", P2, "S", s1.s*1000, lpl_fluid)
     s3 = State("P", P2, "Q", 0, lpl_fluid)
-    s4 = State("H", s3.h*1000, "P", P1, lpl_fluid)
+    s4 = State("H", s3.h*1000, "P", s1.p, lpl_fluid)
     
     #High Pressure Loop States
-    s5 = State("P", P5, "Q", 1, hpl_fluid)
-    s6 = State("P", P6, "S", s5.s*1000, hpl_fluid)
-    s7 = State("P", P6, "Q", 0, hpl_fluid)
+    s7 = State("T", T6, "Q", 0, hpl_fluid)
     s8 = State("H", s7.h*1000, "P", P5, hpl_fluid)
+    s5 = State("P", s8.p, "Q", 1, hpl_fluid)
+    s6 = State("P", s7.p, "S", s5.s*1000, hpl_fluid)
+    
 
     #Mass flow calcs
     m_ratio = (s3.h-s2.h)/(s8.h-s5.h)
@@ -74,7 +77,7 @@ def loop(P1, P2, P5, P6, lpl_fluid, hpl_fluid):
     return [n_actual, m_ratio,W_cmp1,W_cmp2,W_cyc]
     
 
-beta = loop(Plow, Phx, Phx, Phigh, fluid_LPL, fluid_HPL)
+beta = loop(T_low, Phx, Phx, T_high, fluid_LPL, fluid_HPL)
 print("Beta act: ",beta)
 Phx = np.linspace(4.1*10**5, 9.9*10**5,500)
 
@@ -84,11 +87,11 @@ wc1 = []        #Work in compressor 1
 wc2 = []        #Work in compressor 1
 wtot = []       #Work in cycle
 for x in Phx:
-    n.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[0])
-    mr.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[1])
-    wc1.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[2])
-    wc2.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[3])
-    wtot.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[4])
+    n.append(loop(T_low, x, x, T_high, fluid_LPL, fluid_HPL)[0])
+    mr.append(loop(T_low, x, x, T_high, fluid_LPL, fluid_HPL)[1])
+    wc1.append(loop(T_low, x, x, T_high, fluid_LPL, fluid_HPL)[2])
+    wc2.append(loop(T_low, x, x, T_high, fluid_LPL, fluid_HPL)[3])
+    wtot.append(loop(T_low, x, x, T_high, fluid_LPL, fluid_HPL)[4])
 
 
 #Plot COP Vs pressure
