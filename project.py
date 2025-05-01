@@ -186,7 +186,7 @@ i = getIndex(maxVal,n)
 print("Pressure at Max COP: ",Phx[n.index(maxVal)])
 
 
-with open("data.txt","w") as f:
+with open("data.csv","w") as f:
     f.write("Pressure,Beta,massratio,comp1,comp2,wtot\n")
 
     for i in range(len(Phx)):
