@@ -71,7 +71,7 @@ def loop(P1, P2, P5, P6, lpl_fluid, hpl_fluid):
 
     
     n_actual = abs((Q_out)/(W_cmp1+W_cmp2))
-    return [n_actual, m_ratio,W_cmp1,W_cmp2,W_cyc]
+    return [n_actual, m_ratio, m_hpl, m_lpl, W_cmp1, W_cmp2, W_cyc]
     
 
 beta = loop(Plow, Phx, Phx, Phigh, fluid_LPL, fluid_HPL)
@@ -80,54 +80,77 @@ Phx = np.linspace(4.1*10**5, 9.9*10**5,500)
 
 n = []          #Beta
 mr = []         #Mass ratio
+mhpl = []       #Mass Flow (High pressure)
+mlpl = []       #Mass Flow (Low pressure)
 wc1 = []        #Work in compressor 1
 wc2 = []        #Work in compressor 1
 wtot = []       #Work in cycle
 for x in Phx:
     n.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[0])
     mr.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[1])
-    wc1.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[2])
-    wc2.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[3])
-    wtot.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[4])
+    mhpl.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[2])
+    mlpl.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[3])
+    wc1.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[4])
+    wc2.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[5])
+    wtot.append(loop(Plow, x, x, Phigh, fluid_LPL, fluid_HPL)[6])
 
+Phx_bar =[]
+for x in Phx:
+    Phx_bar.append(x*(10**-5))
 
 #Plot COP Vs pressure
 plt.figure(1)
-plt.plot(Phx, n)
-plt.xlabel("Pressure(Pa)")
+plt.plot(Phx_bar, n)
+plt.xlabel("Pressure (Bar)")
 plt.ylabel("COP")
 plt.title("Beta vs Pressure of Intermediate Heat Exchanger")
 plt.savefig("COP",dpi = 300, transparent = True)
 
 #Plot mass ratio vs pressure
 plt.figure(2)
-plt.plot(Phx, mr)
-plt.xlabel("Pressure(Pa)")
+plt.plot(Phx_bar, mr)
+plt.xlabel("Pressure (Bar)")
 plt.ylabel("Mass Ratio (Ammonia/Propane)")
 plt.title("Mass Ratio vs Pressure of Intermediate Heat Exchanger")
 plt.savefig("MassRatio",dpi = 300, transparent = True)
 
-#Plot low pressure compressor work vs pressure
+#Plot mass flow (high pressure loop) vs pressure
 plt.figure(3)
-plt.plot(Phx, wc1)
-plt.xlabel("Pressure(Pa)")
-plt.ylabel("Energy (kJ)")
+plt.plot(Phx_bar, mhpl)
+plt.xlabel("Pressure (Bar)")
+plt.ylabel("Mass Flow Rate (kg/s)")
+plt.title("Mass Flow in High Pressure Loop vs Pressure of Intermediate Heat Exchanger")
+plt.savefig("MassHPL",dpi = 300, transparent = True)
+
+#Plot mass flow (low pressure loop) vs pressure
+plt.figure(4)
+plt.plot(Phx_bar, mlpl)
+plt.xlabel("Pressure (Bar)")
+plt.ylabel("Mass Flow Rate (kg/s)")
+plt.title("Mass Flow in Low Pressure Loop vs Pressure of Intermediate Heat Exchanger")
+plt.savefig("MassLPL",dpi = 300, transparent = True)
+
+#Plot low pressure compressor work vs pressure
+plt.figure(5)
+plt.plot(Phx_bar, wc1)
+plt.xlabel("Pressure (Bar)")
+plt.ylabel("Power (kW)")
 plt.title("Work in Compressor 1 vs Pressure of Intermediate Heat Exchanger")
 plt.savefig("w1",dpi = 300, transparent = True)
 
 #Plot high pressure compressor work vs pressure
-plt.figure(4)
-plt.plot(Phx, wc2)
-plt.xlabel("Pressure(Pa)")
-plt.ylabel("Energy (kJ)")
+plt.figure(6)
+plt.plot(Phx_bar, wc2)
+plt.xlabel("Pressure (Bar)")
+plt.ylabel("Power (kW)")
 plt.title("Work in Compressor 2 vs Pressure of Intermediate Heat Exchanger")
 plt.savefig("w2",dpi = 300, transparent = True)
 
 #Plot total compressor work vs pressure
-plt.figure(5)
-plt.plot(Phx, wtot)
-plt.xlabel("Pressure(Pa)")
-plt.ylabel("Energy (kJ)")
+plt.figure(7)
+plt.plot(Phx_bar, wtot)
+plt.xlabel("Pressure (Bar)")
+plt.ylabel("Power (kW)")
 plt.title("Work in Cycle vs Pressure of Intermediate Heat Exchanger")
 plt.savefig("wtot",dpi = 300, transparent = True)
 
