@@ -53,7 +53,7 @@ def loop(P1, P2, P5, P6, lpl_fluid, hpl_fluid):
 
     #Energy transfer calcs
     Q_in = m_lpl*(s1.h-s4.h)
-    beta = Q_in/W_cyc
+    beta = abs(Q_out/W_cyc)
     
     #Debug Printing
     # print(beta)
@@ -70,12 +70,18 @@ def loop(P1, P2, P5, P6, lpl_fluid, hpl_fluid):
     # print(s7.t-273.15)
 
     
-    n_actual = abs((Q_out)/(W_cmp1+W_cmp2))
-    return [n_actual, m_ratio, m_hpl, m_lpl, W_cmp1, W_cmp2, W_cyc]
+    return [beta, m_ratio, m_hpl, m_lpl, W_cmp1, W_cmp2, W_cyc]
     
 
 beta = loop(Plow, Phx, Phx, Phigh, fluid_LPL, fluid_HPL)
-print("Beta act: ",beta)
+print(loop(Plow, 5*10**5, 5*10**5, Phigh, fluid_LPL, fluid_HPL))
+print(loop(Plow, 6*10**5, 6*10**5, Phigh, fluid_LPL, fluid_HPL))
+print(loop(Plow, 7*10**5, 7*10**5, Phigh, fluid_LPL, fluid_HPL))
+print(loop(Plow, 8*10**5, 8*10**5, Phigh, fluid_LPL, fluid_HPL))
+print(loop(Plow, 9.9*10**5, 9.9*10**5, Phigh, fluid_LPL, fluid_HPL))
+
+
+
 Phx = np.linspace(4.1*10**5, 9.9*10**5,500)
 
 n = []          #Beta
